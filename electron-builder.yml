@@ -1,0 +1,25 @@
+appId: com.momentum.app
+productName: Momentum
+artifactName: Momentum-${version}-${os}-${arch}.${ext}
+directories:
+  output: release
+files:
+  - dist/public/**
+  - electron/**
+  - package.json
+asar: true
+win:
+  target:
+    - nsis
+  executableName: momentum
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+linux:
+  maintainer: Momentum contributors <noreply@github.com>
+  desktopName: momentum
+  executableName: momentum
+  target:
+    - AppImage
+    - deb
+  category: Office
