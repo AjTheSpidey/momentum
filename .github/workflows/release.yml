@@ -13,6 +13,7 @@ jobs:
   desktop:
     name: Build ${{ matrix.name }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - name: Windows EXE
@@ -42,7 +43,7 @@ jobs:
           BASE_PATH: ./
           PORT: 4173
       - name: Build desktop package
-        run: pnpm exec electron-builder --config electron-builder.yml ${{ matrix.command }}
+        run: pnpm exec electron-builder --config electron-builder.yml ${{ matrix.command }} --publish never
       - name: Upload desktop packages
         uses: actions/upload-artifact@v4
         with:
@@ -71,6 +72,8 @@ jobs:
           java-version: '21'
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build web bundle
@@ -82,6 +85,19 @@ jobs:
         run: pnpm run android:add
       - name: Sync Capacitor
         run: pnpm exec cap sync android
+      - name: Set Android app version
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const version = require('./package.json').version;
+          const [major, minor, patch] = version.split('.').map(Number);
+          const versionCode = major * 1_000_000 + minor * 1_000 + patch;
+          const gradleFile = 'android/app/build.gradle';
+          const gradle = fs.readFileSync(gradleFile, 'utf8')
+            .replace(/versionCode\s+\d+/, `versionCode ${versionCode}`)
+            .replace(/versionName\s+"[^"]+"/, `versionName "${version}"`);
+          fs.writeFileSync(gradleFile, gradle);
+          NODE
       - name: Build debug APK
         working-directory: android
         run: ./gradlew assembleDebug
