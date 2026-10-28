@@ -6,6 +6,7 @@
     "name": "Momentum contributors",
     "email": "noreply@github.com"
   },
+  "desktopName": "momentum",
   "homepage": "https://github.com/AjTheSpidey/momentum",
   "license": "MIT",
   "main": "electron/main.cjs",
