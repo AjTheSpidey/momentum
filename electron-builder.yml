@@ -17,8 +17,8 @@ nsis:
   allowToChangeInstallationDirectory: true
 linux:
   maintainer: Momentum contributors <noreply@github.com>
-  desktopName: momentum
   executableName: momentum
+  syncDesktopName: true
   target:
     - AppImage
     - deb
